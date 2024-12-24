@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ВашЛогин</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20%;
+        }
+        input {
+            font-size: 18px;
+            padding: 10px;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <input id="wordInput" type="text" placeholder="Введите слово на русском" />
+    <h1 id="translation">Перевод появится здесь</h1>
+
+    <script>
+        const input = document.getElementById("wordInput");
+        const translationElement = document.getElementById("translation");
+
+        input.addEventListener("input", async () => {
+            const word = input.value.trim();
+            if (!word) {
+                translationElement.textContent = "Перевод появится здесь";
+                return;
+            }
+
+            try {
+                // Отправка запроса на Google Translate
+                const response = await fetch(`https://translate.google.com/m?hl=en&sl=ru&tl=en&ie=UTF-8&prev=_m&q=${encodeURIComponent(word)}`);
+                const text = await response.text();
+
+                // Извлечение перевода из ответа
+                const match = text.match(/<div[^>]*class="t0"[^>]*>([^<]+)<\/div>/);
+                if (match && match[1]) {
+                    translationElement.textContent = match[1];
+                } else {
+                    translationElement.textContent = "Перевод не найден";
+                }
+            } catch (error) {
+                console.error("Ошибка перевода:", error);
+                translationElement.textContent = "Ошибка перевода";
+            }
+        });
+
+        document.title = "itmo399371";
+    </script>
+</body>
+</html>
